@@ -1,0 +1,110 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-09-02 05:32+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: admin.py:22
+msgid "One day ago"
+msgstr "One day ago"
+
+#: admin.py:23
+msgid "Today"
+msgstr "Today"
+
+#: admin.py:24
+msgid "One week ago"
+msgstr "One week ago"
+
+#: admin.py:25
+msgid "One month ago"
+msgstr "One month ago"
+
+#: admin.py:26
+msgid "This month"
+msgstr "This month"
+
+#: admin.py:27
+msgid "3 months ago"
+msgstr "3 months ago"
+
+#: admin.py:28
+msgid "This quarter"
+msgstr "This quarter"
+
+#: admin.py:29
+msgid "6 months ago"
+msgstr "6 months ago"
+
+#: admin.py:30
+msgid "This semester"
+msgstr "This semester"
+
+#: admin.py:31
+msgid "One year ago"
+msgstr "One year ago"
+
+#: admin.py:32
+msgid "This year"
+msgstr "This year"
+
+#: admin.py:52
+msgid "creation period"
+msgstr "creation period"
+
+#: admin.py:59
+msgid "update period"
+msgstr "update period"
+
+#: models.py:108
+msgid "Creation Date"
+msgstr "Creation Date"
+
+#: models.py:109
+msgid "Date and time of record creation"
+msgstr "Date and time of record creation"
+
+#: models.py:110
+msgid "Update Date"
+msgstr "Update Date"
+
+#: models.py:111
+msgid "Date and time of last record update"
+msgstr "Date and time of last record update"
+
+#: models.py:145
+msgid "Deletion Date"
+msgstr "Deletion Date"
+
+#: models.py:146
+msgid "Date and time of record deletion"
+msgstr "Date and time of record deletion"
+
+#: models.py:170
+msgid "Created By"
+msgstr "Created By"
+
+#: models.py:170
+msgid "User marked as creator of this record"
+msgstr "User marked as creator of this record"
+
+#: models.py:181
+msgid "Owned By"
+msgstr "Owned By"
+
+#: models.py:182
+msgid "User marked as owner of this record"
+msgstr "User marked as owner of this record"
