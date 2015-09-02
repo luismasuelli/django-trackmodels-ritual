@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='django-tracked-ritual',
+    name='django-trackmodels-ritual',
     version='0.0.1',
     namespace_packages=['grimoire', 'grimoire.django'],
     packages=find_packages(exclude=['trackmodels_proj', 'trackmodels_proj.*']),
