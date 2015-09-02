@@ -42,7 +42,7 @@ class PeriodFilter(SimpleListFilter):
         :return: filtered queryset.
         """
 
-        return getattr(queryset, self.PERIOD_DATE_METHOD)(self.value())
+        return getattr(queryset, self.PERIOD_DATE_METHOD)(self.value()) if self.value() else queryset
 
 
 class CreatePeriodFilter(PeriodFilter):
