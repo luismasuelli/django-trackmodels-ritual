@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from dateutils import relativedelta
 
 
-class TrackedLiveQueryset(models.QuerySet):
+class TrackedLiveQuerySet(models.QuerySet):
     """
     Takes advantage from the created_on and updated_on fields to perform many additional queries.
     """
@@ -86,7 +86,7 @@ class TrackedLiveQueryset(models.QuerySet):
         return self.filter(updated_on__range=self._period_date(period))
 
 
-class TrackedLiveAndDeadQueryset(TrackedLiveQueryset):
+class TrackedLiveAndDeadQuerySet(TrackedLiveQuerySet):
     """
     Takes advantage of the deleted_on field to perform an additional implicit filter on all().
     With this filter on, elements being deleted will not be visible anymore by queryset.
@@ -97,7 +97,7 @@ class TrackedLiveAndDeadQueryset(TrackedLiveQueryset):
         Ask by .all() also filters by having deleted_on in null.
         """
 
-        return super(TrackedLiveAndDeadQueryset, self).all().filter(deleted_on__isnull=True)
+        return super(TrackedLiveAndDeadQuerySet, self).all().filter(deleted_on__isnull=True)
 
 
 class TrackedLive(models.Model):
@@ -110,7 +110,7 @@ class TrackedLive(models.Model):
     updated_on = models.DateTimeField(default=now, null=False, editable=False, verbose_name=_(u"Update Date"),
                                       help_text=_(u"Date and time of last record update"))
 
-    objects = TrackedLiveQueryset.as_manager()
+    objects = TrackedLiveQuerySet.as_manager()
 
     class Meta:
         abstract = True
@@ -145,7 +145,7 @@ class TrackedLiveAndDead(TrackedLive):
     deleted_on = models.DateTimeField(null=True, editable=False, verbose_name=_(u"Deletion Date"),
                                       help_text=_(u"Date and time of record deletion"))
 
-    objects = TrackedLiveAndDeadQueryset.as_manager()
+    objects = TrackedLiveAndDeadQuerySet.as_manager()
 
     class Meta:
         abstract = True

@@ -114,20 +114,26 @@ class UpdatePeriodBaseFilter(PeriodFilter):
     parameter_name = 'updated_on_period'
     title = _('update period')
 
+
 class CreatePeriodAgoFilter(PeriodAgoMixin, CreatePeriodBaseFilter):
     pass
+
 
 class CreatePeriodAgoAndCurrentFilter(PeriodAgoAndCurrentMixin, CreatePeriodBaseFilter):
     pass
 
+
 class CreatePeriodCurrentFilter(PeriodCurrentMixin, CreatePeriodBaseFilter):
     pass
+
 
 class UpdatePeriodAgoFilter(PeriodAgoMixin, UpdatePeriodBaseFilter):
     pass
 
+
 class UpdatePeriodAgoAndCurrentFilter(PeriodAgoAndCurrentMixin, UpdatePeriodBaseFilter):
     pass
+
 
 class UpdatePeriodCurrentFilter(PeriodCurrentMixin, UpdatePeriodBaseFilter):
     pass

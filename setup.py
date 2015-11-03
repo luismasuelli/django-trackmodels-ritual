@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-trackmodels-ritual',
-    version='0.0.3',
+    version='0.0.5',
     namespace_packages=['grimoire', 'grimoire.django'],
-    packages=find_packages(exclude=['trackmodels_proj', 'trackmodels_proj.*']),
+    packages=find_packages(exclude=['trackmodels_proj', 'trackmodels_proj.*', 'sample', 'sample.*']),
     package_data={
         'grimoire.django.tracked': [
             'locale/*/LC_MESSAGES/*.*'
