@@ -92,12 +92,29 @@ class TrackedLiveAndDeadQuerySet(TrackedLiveQuerySet):
     With this filter on, elements being deleted will not be visible anymore by queryset.
     """
 
-    def all(self):
+    def all(self, seriously=False):
         """
         Ask by .all() also filters by having deleted_on in null.
+        If seriously, then the former behavior is called instead.
         """
 
-        return super(TrackedLiveAndDeadQuerySet, self).all().filter(deleted_on__isnull=True)
+        qs = super(TrackedLiveAndDeadQuerySet, self).all()
+        return qs if seriously else qs.filter(deleted_on__isnull=True)
+
+    def delete(self, seriously=False):
+        """
+        Marks elements as deleted.
+        If seriously, then the former behavior is called instead.
+        """
+
+        return super(TrackedLiveAndDeadQuerySet, self).delete() if seriously else self.update(deleted_on=now())
+
+    def dead(self):
+        """
+        Lists the dead elements. It is the opposite of all([seriously=False]).
+        """
+
+        return super(TrackedLiveAndDeadQuerySet, self).filter(deleted_on__isnull=False)
 
 
 class TrackedLive(models.Model):
@@ -150,15 +167,18 @@ class TrackedLiveAndDead(TrackedLive):
     class Meta:
         abstract = True
 
-    def delete(self, using=None):
+    def delete(self, using=None, seriously=False):
         """
         Deletes an object, but logically (not from database).
         :param using:
         :return:
         """
 
-        self.deleted_on = now()
-        return self.save(using=using, update_fields=('deleted_on', '-updated_on'))
+        if seriously:
+            return super(TrackedLiveAndDead, self).delete(using=using)
+        else:
+            self.deleted_on = now()
+            return self.save(using=using, update_fields=('deleted_on', '-updated_on'))
 
 
 class TrackedUserCreated(models.Model):
