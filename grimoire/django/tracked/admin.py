@@ -231,21 +231,20 @@ class TrackedLiveReportingMixin(ModelAdmin):
     This mixin provides additional urls to process our reports.
     """
 
+    change_list_template = 'admin/tracked/change_list.html'
     report_error_template = None
     report_period_type = 'both'  # Report period types may be: 'current', 'ago', or 'both'
-    report_period_argument = 'period'  # URL argument name to pass the selected reporting period
-    report_key_argument = 'report_key'  # URL argument name to pass the selected report key
-    report_options = []  # List of available reports
+    report_generators = []  # List of available reports
 
     def get_reporters(self):
         """
-        Converts the report_options list to a dictionary, and caches the result.
+        Converts the report_generators list to a dictionary, and caches the result.
         :return: A dictionary with such references.
         """
 
-        if not hasattr(self, '_report_options_by_key'):
-            self._report_options_by_key = {r.key: r for r in self.report_options}
-        return self._report_options_by_key
+        if not hasattr(self, '_report_generators_by_key'):
+            self._report_generators_by_key = {r.key: r for r in self.report_generators}
+        return self._report_generators_by_key
 
     def get_period_pattern(self):
         """
@@ -261,7 +260,48 @@ class TrackedLiveReportingMixin(ModelAdmin):
         elif self.report_period_type == 'both':
             return 'dwmqhyDMQHY'
         else:
-            raise ValueError("Invali report period type. Expected: 'ago', 'current', or 'both'")
+            raise ValueError("Invalid report period type. Expected: 'ago', 'current', or 'both'")
+
+    def get_period_options(self):
+        """
+        Given the current setting in report_period_type, returns a list of options (suitable for select)
+          as an array or pairs telling the valid periods to select.
+        :return: An array of period options.
+        """
+
+        periods_ago = (
+            ('d', _('One exact day ago')),
+            ('w', _('One exact week ago')),
+            ('m', _('One exact month ago')),
+            ('q', _('One exact quarter ago')),
+            ('h', _('One exact semester ago')),
+            ('y', _('One exact year ago')),
+        )
+        periods_current = (
+            ('D', _('Today')),
+            ('M', _('This month')),
+            ('Q', _('This quarter')),
+            ('H', _('This semester')),
+            ('Y', _('This year')),
+        )
+
+        if self.report_period_type == 'ago':
+            return periods_ago
+        elif self.report_period_type == 'current':
+            return periods_current
+        elif self.report_period_type == 'both':
+            return periods_ago + periods_current
+        else:
+            raise ValueError("Invalid report period type. Expected: 'ago', 'current', or 'both'")
+
+    def get_report_options(self):
+        """
+        Enumerates the report options as a list (suitable for a select) as an array of pairs
+          telling the valid periods to select.
+        :return: An array of period options.
+        """
+
+        return [(r.key, r.text) for r in self.report_generators]
 
     def report_urls(self):
         """
@@ -271,9 +311,21 @@ class TrackedLiveReportingMixin(ModelAdmin):
 
         info = self.model._meta.app_label, self.model._meta.model_name
         return [
-            url(r'^report/(?P<key>\w+)/(?P<period>['+self.get_period_pattern()+'])$',
+            url(r'^report/(?P<key>\w+)/(?P<period>\w)$',
                 self.admin_site.admin_view(self.report_view), name='%s_%s_tracking_report' % info)
         ]
+
+    def changelist_view(self, request, extra_context=None):
+        """
+        Updates the changelist view to include settings from this admin.
+        """
+
+        return super(TrackedLiveReportingMixin, self).changelist_view(
+            request, dict(extra_context,
+                          url_name='%s_%s_tracking_report' % (self.model._meta.app_label, self.model._meta.model_name),
+                          period_options=self.get_period_options(),
+                          report_options=self.get_report_options())
+        )
 
     def render_report_error(self, request, error, status):
         """

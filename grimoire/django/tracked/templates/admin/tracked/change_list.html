@@ -1,0 +1,52 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <style type="text/css">
+        .inline-form label, select, input {
+            display: inline-block;
+            margin: 0 15px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <a id="show-report-generator" href="#">{% trans "Generate Report" %}</a>
+    <div id="report-form" style="display: none">
+        <form action="javascript: void 0" class="inline-form">
+            <label for="period">Period:</label>
+            <select id="period" name="period">
+                <option value="" selected>{% trans 'All the records' %}</option>
+                {% for pair in period_options %}
+                    <option value="{{ pair.0 }}">{{ pair.1 }}</option>
+                {% endfor %}
+            </select>
+            <label for="report">Report:</label>
+            <select id="report" name="report">
+                {% for pair in report_options %}
+                    <option value="{{ pair.0 }}">{{ pair.1 }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Exportar" />
+        </form>
+    </div>
+    <script>
+    $(document).ready(function(e){
+        var template = '{% url 'url_name' key='{k}' period='{p}' as template_url %}{{ template_url | escapejs }}';
+        $("#show-report-generator").click(function(e){
+            $("#report-form").show();
+        });
+        var form = $("#report-form");
+        form.find("form").submit(function(e){
+            var $this = $(this);
+            var period = $this.find('[name="period"]').val();
+            var report = $this.find('[name="report"]').val();
+            document.location.href = template.replace('{k}', report).replace('{p}', period);
+            return false;
+        });
+        form.find('[name="report"]').find('option').first().prop('selected', true);
+    });
+    </script>
+    {{ block.super }}
+{% endblock %}
