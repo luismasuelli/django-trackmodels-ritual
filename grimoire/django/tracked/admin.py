@@ -307,7 +307,7 @@ class TrackedLiveReportingMixin(ModelAdmin):
             return self.render_report_error(request, _('Report not found'), 404)
 
         allowed_periods = [c for c in self.get_period_pattern()]
-        if period not in allowed_periods:
+        if period and period not in allowed_periods:
             return self.render_report_error(request, _('Invalid report type'), 400)
 
         try:
