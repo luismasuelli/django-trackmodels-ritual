@@ -1,5 +1,15 @@
-from django.contrib.admin import SimpleListFilter
+from __future__ import unicode_literals
+from django.conf.urls import url
+from django.contrib.admin import SimpleListFilter, ModelAdmin
+from django.http import HttpResponse
+from django.template.response import TemplateResponse
+from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
+from abc import ABCMeta, abstractmethod
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class PeriodAgoMixin(object):
@@ -137,3 +147,171 @@ class UpdatePeriodAgoAndCurrentFilter(PeriodAgoAndCurrentMixin, UpdatePeriodBase
 
 class UpdatePeriodCurrentFilter(PeriodCurrentMixin, UpdatePeriodBaseFilter):
     pass
+
+
+class TrackingReport(object):
+    """
+    This is an abstract class to process a report for a given format, model, and period.
+    Stuff must be defined like:
+    1. The report key and display. It must have a meaning in the software and should be allowed to the
+       user to specify it. It is specified in an instance basis.
+    2. The content type. This could be defined by overriding `get_attachment_content_type` method or just
+       the `content_type` member (a string).
+    3. The attachment name. This MUST be defined by overriding `get_attachment_filename` method.
+    4. The attachment content. This MUST be defined by overriding `get_attachment_content` method.
+    """
+
+    __metaclass__ = ABCMeta
+    content_type = None
+
+    def __init__(self, key, text):
+        """
+        Telling a key and a value is useful to let the report be picked
+        :param key: This string value must be unique across different reports in the same admin.
+        :param text: This string (or locale lazy resolver) is the display text for the option.
+        """
+
+        self._key = key
+        self._text = text
+
+    @property
+    def key(self):
+        return self._key
+
+    @property
+    def text(self):
+        return self._text
+
+    def get_attachment_content_type(self):
+        """
+        Content-Type to be used for the attachment.
+        :return: A string being a MIME type.
+        """
+
+        return self.content_type
+
+    @abstractmethod
+    def get_attachment_filename(self):
+        """
+        Filename to be used for the attachment.
+        :return: A string with the filename.
+        """
+
+        return 'override.me'
+
+    @abstractmethod
+    def get_attachment_content(self, request, model, period):
+        """
+        Returns the generated file content.
+        :param request: The request being processed.
+        :param model: The model class being processed.
+        :param period: The model being processed.
+        :return: The report content (usually expressed in raw bytes but could be unicode as well).
+        """
+
+        return b''
+
+    def process(self, request, model, period):
+        """
+        Will process the request and return an appropriate Response object.
+        :param request: The request being processed.
+        :param model: The model class being processed.
+        :param period: The model being processed.
+        :return: The response with the report.
+        """
+
+        response = HttpResponse(content=self.get_attachment_content(request, model, period) or '',
+                                content_type=self.get_attachment_content_type() or 'text/plain')
+        response['Content-Disposition'] = 'attachment; filename=' + (self.get_attachment_filename() or 'report.txt')
+        return response
+
+
+class TrackedLiveReportingMixin(ModelAdmin):
+    """
+    This mixin provides additional urls to process our reports.
+    """
+
+    report_error_template = None
+    report_period_type = 'both'  # Report period types may be: 'current', 'ago', or 'both'
+    report_period_argument = 'period'  # URL argument name to pass the selected reporting period
+    report_key_argument = 'report_key'  # URL argument name to pass the selected report key
+    report_options = []  # List of available reports
+
+    def get_reporters(self):
+        """
+        Converts the report_options list to a dictionary, and caches the result.
+        :return: A dictionary with such references.
+        """
+
+        if not hasattr(self, '_report_options_by_key'):
+            self._report_options_by_key = {r.key: r for r in self.report_options}
+        return self._report_options_by_key
+
+    def get_period_pattern(self):
+        """
+        Given the current setting in report_period_type, returns a string pattern (suitable for regexp)
+          of characters being the valid periods to select.
+        :return: A string of period value characters.
+        """
+
+        if self.report_period_type == 'ago':
+            return 'dwmqhy'
+        elif self.report_period_type == 'current':
+            return 'DMQHY'
+        elif self.report_period_type == 'both':
+            return 'dwmqhyDMQHY'
+        else:
+            raise ValueError("Invali report period type. Expected: 'ago', 'current', or 'both'")
+
+    def report_urls(self):
+        """
+        Returns additional urls to add to a result of `get_urls` in a descendant ModelAdmin
+        :return: A list of url declarations.
+        """
+
+        info = self.model._meta.app_label, self.model._meta.model_name
+        return [
+            url(r'^report/(?P<key>\w+)/(?P<period>['+self.get_period_pattern()+'])$',
+                self.admin_site.admin_view(self.report_view), name='%s_%s_tracking_report' % info)
+        ]
+
+    def render_report_error(self, request, error, status):
+        """
+        Renders the report errors template.
+        """
+
+        opts = self.model._meta
+        app_label = opts.app_label
+        request.current_app = self.admin_site.name
+        context = dict(
+            self.admin_site.each_context(request),
+            title=(_('Tracking report error for %s') % force_text(opts.verbose_name)),
+            error=error
+        )
+
+        return TemplateResponse(request, self.report_error_template or [
+            "admin/{}/{}/tracking_report_error.html".format(app_label, opts.model_name),
+            "admin/{}/tracking_report_error.html".format(app_label),
+            "admin/tracking_report_error.html"
+        ], context, status=status)
+
+    def report_view(self, request, key, period):
+        """
+        Processes the reporting action.
+        """
+
+        reporters = self.get_reporters()
+        try:
+            reporter = reporters[key]
+        except KeyError:
+            return self.render_report_error(request, _('Report not found'), 404)
+
+        allowed_periods = [c for c in self.get_period_pattern()]
+        if period not in allowed_periods:
+            return self.render_report_error(request, _('Invalid report type'), 400)
+
+        try:
+            return reporter.process(request, self.model, period)
+        except:
+            logger.exception('Tracking Reports could not generate the report due to an internal error')
+            return self.render_report_error(request, _('An unexpected error has occurred'), 500)
