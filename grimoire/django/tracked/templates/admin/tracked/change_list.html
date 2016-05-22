@@ -16,26 +16,26 @@
     <a id="show-report-generator" href="javascript: void 0">{% trans "Generate Report" %}</a>
     <div id="report-form" style="display: none">
         <form action="javascript: void 0" class="inline-form">
-            <label for="period">Period:</label>
+            <label for="period">{% trans 'Period' %}</label>
             <select id="period" name="period">
-                <option value="" selected>{% trans 'All the records' %}</option>
+                <option value="A" selected>{% trans 'All the records' %}</option>
                 {% for pair in period_options %}
                     <option value="{{ pair.0 }}">{{ pair.1 }}</option>
                 {% endfor %}
             </select>
-            <label for="report">Report:</label>
+            <label for="report">{% trans 'Report' %}</label>
             <select id="report" name="report">
                 {% for pair in report_options %}
                     <option value="{{ pair.0 }}">{{ pair.1 }}</option>
                 {% endfor %}
             </select>
-            <input type="submit" value="Exportar" />
+            <input type="submit" value="{% trans 'Export' %}" />
         </form>
     </div>
     <script>
         (function($){
             $(document).ready(function(e){
-                var template = '{% url 'url_name' key='{k}' period='{p}' as template_url %}{{ template_url | escapejs }}';
+                var template = '{% url url_name key='K' period='P' %}';
                 $("#show-report-generator").click(function(e){
                     $("#report-form").css({'display': 'inline-block'});
                 });
@@ -44,7 +44,7 @@
                     var $this = $(this);
                     var period = $this.find('[name="period"]').val();
                     var report = $this.find('[name="report"]').val();
-                    document.location.href = template.replace('{k}', report).replace('{p}', period);
+                    document.location.href = template.replace('K', report).replace('P', period);
                     return false;
                 });
                 form.find('[name="report"]').find('option').first().prop('selected', true);

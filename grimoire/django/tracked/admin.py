@@ -9,12 +9,10 @@ from django.utils.translation import ugettext_lazy as _
 from abc import ABCMeta, abstractmethod
 from collections import namedtuple
 from cantrips import functions
-from django.utils.six import text_type
-import StringIO
+from django.utils.six import text_type, StringIO
 import datetime
 import logging
 import csv
-import io
 
 
 logger = logging.getLogger(__name__)
@@ -337,7 +335,7 @@ class CSVReport(TrackingReport):
         :return: string
         """
 
-        output = io.StringIO()
+        output = StringIO()
         writer = csv.writer(output, **self.csv_kwargs)
         writer.writerows([result.headers] + result.values)
         return output.getvalue()
@@ -406,10 +404,11 @@ class TrackedLiveAdmin(ModelAdmin):
         """
 
         info = self.model._meta.app_label, self.model._meta.model_name
-        return super(TrackedLiveAdmin, self).get_urls() + [
+        return [
             url(r'^report/(?P<key>\w+)/(?P<period>\w)$',
-                self.admin_site.admin_view(self.report_view), name='%s_%s_tracking_report' % info)
-        ]
+                self.admin_site.admin_view(self.report_view),
+                name='%s_%s_tracking_report' % info)
+        ] + super(TrackedLiveAdmin, self).get_urls()
 
     def changelist_view(self, request, extra_context=None):
         """
@@ -418,7 +417,7 @@ class TrackedLiveAdmin(ModelAdmin):
 
         return super(TrackedLiveAdmin, self).changelist_view(
             request, dict(extra_context or {},
-                          url_name='%s_%s_tracking_report' % (self.model._meta.app_label, self.model._meta.model_name),
+                          url_name='admin:%s_%s_tracking_report' % (self.model._meta.app_label, self.model._meta.model_name),
                           period_options=self.get_period_options(),
                           report_options=self.get_report_options())
         )
@@ -433,8 +432,9 @@ class TrackedLiveAdmin(ModelAdmin):
         request.current_app = self.admin_site.name
         context = dict(
             self.admin_site.each_context(request),
+            module_name=force_text(opts.verbose_name_plural),
             title=(_('Tracking report error for %s') % force_text(opts.verbose_name)),
-            error=error
+            opts=opts, app_label=app_label, error=error
         )
 
         return TemplateResponse(request, self.report_error_template or [
@@ -452,6 +452,8 @@ class TrackedLiveAdmin(ModelAdmin):
         """
 
         qs = self.get_queryset(request)
+        if not period:
+            return qs
         if self.tracked_stamps == 'create':
             return getattr(qs, 'created_on')(period)
         elif self.tracked_stamps == 'update':
@@ -473,6 +475,9 @@ class TrackedLiveAdmin(ModelAdmin):
             return self.render_report_error(request, _('Report not found'), 404)
 
         allowed_periods = [k for (k, v) in self.get_period_options()]
+        if period == 'A':
+            period = ''
+
         if period and period not in allowed_periods:
             return self.render_report_error(request, _('Invalid report type'), 400)
 

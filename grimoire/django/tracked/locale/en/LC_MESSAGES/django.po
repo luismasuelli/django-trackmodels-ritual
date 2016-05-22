@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-02 05:32+0000\n"
+"POT-Creation-Date: 2016-05-22 05:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,89 +22,134 @@ msgid "One day ago"
 msgstr "One day ago"
 
 #: admin.py:23
-msgid "Today"
-msgstr "Today"
-
-#: admin.py:24
 msgid "One week ago"
 msgstr "One week ago"
 
-#: admin.py:25
+#: admin.py:24
 msgid "One month ago"
 msgstr "One month ago"
 
-#: admin.py:26
-msgid "This month"
-msgstr "This month"
-
-#: admin.py:27
+#: admin.py:25
 msgid "3 months ago"
 msgstr "3 months ago"
 
-#: admin.py:28
-msgid "This quarter"
-msgstr "This quarter"
-
-#: admin.py:29
+#: admin.py:26
 msgid "6 months ago"
 msgstr "6 months ago"
 
-#: admin.py:30
-msgid "This semester"
-msgstr "This semester"
-
-#: admin.py:31
+#: admin.py:27
 msgid "One year ago"
 msgstr "One year ago"
 
 #: admin.py:32
+msgid "Today"
+msgstr "Today"
+
+#: admin.py:33
+msgid "This month"
+msgstr "This month"
+
+#: admin.py:34
+msgid "This quarter"
+msgstr "This quarter"
+
+#: admin.py:35
+msgid "This semester"
+msgstr "This semester"
+
+#: admin.py:36
 msgid "This year"
 msgstr "This year"
 
-#: admin.py:52
-msgid "creation period"
-msgstr "creation period"
+#: admin.py:47 templates/admin/tracked/change_list.html:19
+msgid "Period"
+msgstr "Period"
 
-#: admin.py:59
-msgid "update period"
-msgstr "update period"
+#: admin.py:436
+#, python-format
+msgid "Tracking report error for %s"
+msgstr "Tracking report error for %s"
 
-#: models.py:108
+#: admin.py:475
+msgid "Report not found"
+msgstr "Report not found"
+
+#: admin.py:482
+msgid "Invalid report type"
+msgstr "Invalid report type"
+
+#: admin.py:488
+msgid "An unexpected error has occurred"
+msgstr "An unexpected error has occurred"
+
+#: models.py:137
 msgid "Creation Date"
 msgstr "Creation Date"
 
-#: models.py:109
+#: models.py:138
 msgid "Date and time of record creation"
 msgstr "Date and time of record creation"
 
-#: models.py:110
+#: models.py:139
 msgid "Update Date"
 msgstr "Update Date"
 
-#: models.py:111
+#: models.py:140
 msgid "Date and time of last record update"
 msgstr "Date and time of last record update"
 
-#: models.py:145
+#: models.py:174
 msgid "Deletion Date"
 msgstr "Deletion Date"
 
-#: models.py:146
+#: models.py:175
 msgid "Date and time of record deletion"
 msgstr "Date and time of record deletion"
 
-#: models.py:170
+#: models.py:202
 msgid "Created By"
 msgstr "Created By"
 
-#: models.py:170
+#: models.py:202
 msgid "User marked as creator of this record"
 msgstr "User marked as creator of this record"
 
-#: models.py:181
+#: models.py:213
 msgid "Owned By"
 msgstr "Owned By"
 
-#: models.py:182
+#: models.py:214
 msgid "User marked as owner of this record"
 msgstr "User marked as owner of this record"
+
+#: templates/admin/tracked/change_list.html:16
+msgid "Generate Report"
+msgstr "Generate Report"
+
+#: templates/admin/tracked/change_list.html:21
+msgid "All the records"
+msgstr "All the records"
+
+#: templates/admin/tracked/change_list.html:26
+#: templates/admin/tracking_report_error.html:11
+msgid "Report"
+msgstr "Report"
+
+#: templates/admin/tracked/change_list.html:32
+msgid "Export"
+msgstr "Export"
+
+#: templates/admin/tracking_report_error.html:8
+msgid "Home"
+msgstr "Home"
+
+#: templates/admin/tracking_report_error.html:16
+#, python-format
+msgid "Report could not be downloaded due to the following error: %(error)s"
+msgstr "Report could not be downloaded due to the following error: %(error)s"
+
+#~ msgid "creation period"
+#~ msgstr "creation period"
+
+#~ msgid "update period"
+#~ msgstr "update period"
