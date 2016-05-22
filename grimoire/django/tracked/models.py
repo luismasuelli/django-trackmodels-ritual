@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.db.models import Q
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 from dateutils import relativedelta
@@ -84,6 +85,17 @@ class TrackedLiveQuerySet(models.QuerySet):
         """
 
         return self.filter(updated_on__range=self._period_date(period))
+
+    def created_or_updated_on(self, period):
+        """
+        Filters by a union between created_on and updated_on.
+        :param period: A single-character value in [dwmqhyDMQHY]. Any other value will raise a KeyError.
+        :raises: KeyError if the period is not valid.
+        :returns: A queryset, filtered with update date between now and a specific period ago.
+        """
+
+        period_date = self._period_date(period)
+        return self.filter(Q(created_on__range=period_date)|Q(updated_on__range=period_date))
 
 
 class TrackedLiveAndDeadQuerySet(TrackedLiveQuerySet):
