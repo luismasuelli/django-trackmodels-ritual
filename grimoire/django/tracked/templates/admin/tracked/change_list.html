@@ -12,7 +12,8 @@
 {% endblock %}
 
 {% block content %}
-    <a id="show-report-generator" href="#">{% trans "Generate Report" %}</a>
+    {% if report_options|length %}
+    <a id="show-report-generator" href="javascript: void 0">{% trans "Generate Report" %}</a>
     <div id="report-form" style="display: none">
         <form action="javascript: void 0" class="inline-form">
             <label for="period">Period:</label>
@@ -32,21 +33,24 @@
         </form>
     </div>
     <script>
-    $(document).ready(function(e){
-        var template = '{% url 'url_name' key='{k}' period='{p}' as template_url %}{{ template_url | escapejs }}';
-        $("#show-report-generator").click(function(e){
-            $("#report-form").show();
-        });
-        var form = $("#report-form");
-        form.find("form").submit(function(e){
-            var $this = $(this);
-            var period = $this.find('[name="period"]').val();
-            var report = $this.find('[name="report"]').val();
-            document.location.href = template.replace('{k}', report).replace('{p}', period);
-            return false;
-        });
-        form.find('[name="report"]').find('option').first().prop('selected', true);
-    });
+        (function($){
+            $(document).ready(function(e){
+                var template = '{% url 'url_name' key='{k}' period='{p}' as template_url %}{{ template_url | escapejs }}';
+                $("#show-report-generator").click(function(e){
+                    $("#report-form").css({'display': 'inline-block'});
+                });
+                var form = $("#report-form");
+                form.find("form").submit(function(e){
+                    var $this = $(this);
+                    var period = $this.find('[name="period"]').val();
+                    var report = $this.find('[name="report"]').val();
+                    document.location.href = template.replace('{k}', report).replace('{p}', period);
+                    return false;
+                });
+                form.find('[name="report"]').find('option').first().prop('selected', true);
+            });
+        })(django.jQuery);
     </script>
+    {% endif %}
     {{ block.super }}
 {% endblock %}
