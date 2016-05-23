@@ -212,11 +212,12 @@ class TrackingReport(object):
         return 'override.me'
 
     @abstractmethod
-    def dump_report_content(self, result):
+    def dump_report_content(self, request, result):
         """
         Dumps the content to a string, suitable to being written on a file.
-        :param result:
-        :return: string
+        :param request: Request being processed.
+        :param result: Result being dumped.
+        :return: Dumped string.
         """
 
         return b''
@@ -229,7 +230,7 @@ class TrackingReport(object):
         :return: The report content (usually expressed in raw bytes but could be unicode as well).
         """
 
-        return self.dump_report_content(self.get_report_data_rows(request, queryset))
+        return self.dump_report_content(request, self.get_report_data_rows(request, queryset))
 
     def process(self, request, queryset, period):
         """
@@ -299,7 +300,7 @@ class CSVReport(TrackingReport):
 
         return 'report-%s.csv' % now().strftime("%Y%m%d%H%M%S")
 
-    def dump_report_content(self, result):
+    def dump_report_content(self, request, result):
         """
         Dumps the content to a string, suitable to being written on a file.
         :param result: The result being processed.
