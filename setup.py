@@ -2,12 +2,14 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-trackmodels-ritual',
-    version='0.0.9',
+    version='0.0.10',
     namespace_packages=['grimoire', 'grimoire.django'],
     packages=find_packages(exclude=['trackmodels_proj', 'trackmodels_proj.*', 'sample', 'sample.*']),
     package_data={
         'grimoire.django.tracked': [
-            'locale/*/LC_MESSAGES/*.*'
+            'locale/*/LC_MESSAGES/*.*',
+            'templates/admin/*.html',
+            'templates/admin/tracked/*.html',
         ]
     },
     url='https://github.com/luismasuelli/django-trackmodels-ritual',
