@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.conf.urls import url
 from django.contrib.admin import SimpleListFilter, ModelAdmin
+from django.core.exceptions import PermissionDenied
 from django.template.response import TemplateResponse
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
@@ -207,6 +208,9 @@ class TrackedLiveAdmin(ModelAdmin):
         """
         Processes the reporting action.
         """
+
+        if not self.has_change_permission(request, None):
+            raise PermissionDenied
 
         reporters = self.get_reporters()
         try:
