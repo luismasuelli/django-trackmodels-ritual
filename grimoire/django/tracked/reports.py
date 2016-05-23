@@ -77,9 +77,10 @@ class TrackingReport(object):
     def text(self):
         return self._text
 
-    def get_attachment_content_type(self):
+    def get_attachment_content_type(self, request):
         """
         Content-Type to be used for the attachment.
+        :param request: Request being processed
         :return: A string being a MIME type.
         """
 
@@ -240,7 +241,7 @@ class TrackingReport(object):
         """
 
         response = HttpResponse(content=self.get_attachment_content(request, queryset) or '',
-                                content_type=self.get_attachment_content_type() or 'text/plain')
+                                content_type=self.get_attachment_content_type(request) or 'text/plain')
         response['Content-Disposition'] = 'attachment; filename=' + (self.get_attachment_filename(request, period) or
                                                                      'report.txt')
         return response
