@@ -256,16 +256,15 @@ class RichFormatTrackingReport(TrackingReport):
 
     def _cell_value(self, value):
         """
-        Returns both the regular value and the serialized one.
+        For rich formats, return the plain value. It will be perhaps serialized later.
         :param value: The regular value.
-        :return: (regular, serialized)
+        :return: value
         """
 
-        return value, self._serialize_value(value)
+        return value
 
     @abstractmethod
-    def get_cell_format(self, request, column_spec, column_display, column_index, row_index,
-                        cell_value, cell_serialized_value):
+    def get_cell_format(self, request, column_spec, column_display, column_index, row_index, cell_value):
         """
         Gets data for the format to be used when formatting the cell.
         :param request: The request being processed.
@@ -273,9 +272,7 @@ class RichFormatTrackingReport(TrackingReport):
         :param column_display: The current column display text.
         :param column_index: The current column index.
         :param row_index: The 0-based row index. None if processing a header cell.
-        :param cell_value: The cell value (not serialized). None if processing a header cell.
-        :param cell_serialized_value: The cell serialized value (applies to, say, dates).
-          None if processing a header cell.
+        :param cell_value: The cell value (not serialized). None if processing a header cell..
         :return: The returned data is arbitrary, and according to the underlying
           report class.
         """
