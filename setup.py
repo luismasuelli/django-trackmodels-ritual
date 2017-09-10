@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-trackmodels-ritual',
-    version='0.0.11',
+    version='0.0.12',
     namespace_packages=['grimoire', 'grimoire.django'],
     packages=find_packages(exclude=['trackmodels_proj', 'trackmodels_proj.*', 'sample', 'sample.*']),
     package_data={
@@ -17,5 +17,5 @@ setup(
     author='Luis y Anita',
     author_email='luismasuelli@hotmail.com',
     description='The trackmodels library is useful to set creation/update/delete dates on models and track by them',
-    install_requires=['Django>=1.7', 'dateutils>=0.6.6']
+    install_requires=['Django>=1.7', 'python-dateutil>=2.6.1', 'python-cantrips>=7.5']
 )
