@@ -17,5 +17,5 @@ setup(
     author='Luis y Anita',
     author_email='luismasuelli@hotmail.com',
     description='The trackmodels library is useful to set creation/update/delete dates on models and track by them',
-    install_requires=['Django>=1.7', 'python-dateutil>=2.6.1', 'python-cantrips>=7.5']
+    install_requires=['Django>=1.7', 'python-dateutil>=2.6.1', 'python-cantrips>=0.7.5']
 )
