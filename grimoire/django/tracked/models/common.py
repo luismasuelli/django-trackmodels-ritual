@@ -3,7 +3,8 @@ from django.conf import settings
 from django.db.models import Q
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
-from dateutil import relativedelta
+from dateutil.relativedelta import relativedelta
+
 
 def define_all(QuerySet, Model):
 
@@ -196,8 +197,8 @@ def define_all(QuerySet, Model):
         """
 
         created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, editable=False, related_name="+",
-                                       verbose_name=_(u"Created By"), help_text=_(u"User marked as creator of this "
-                                                                                  u"record"))
+                                       on_delete=models.DO_NOTHING, verbose_name=_(u"Created By"),
+                                       help_text=_(u"User marked as creator of this record"))
 
         class Meta:
             abstract = True
@@ -208,7 +209,8 @@ def define_all(QuerySet, Model):
         """
 
         owned_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, related_name="+",
-                                     verbose_name=_(u"Owned By"), help_text=_(u"User marked as owner of this record"))
+                                     on_delete=models.DO_NOTHING, verbose_name=_(u"Owned By"),
+                                     help_text=_(u"User marked as owner of this record"))
 
         class Meta:
             abstract = True
