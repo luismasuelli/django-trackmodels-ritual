@@ -1,7 +1,7 @@
+from io import StringIO
 from abc import ABCMeta, abstractmethod
 from collections import namedtuple
 from cantrips import functions
-from django.utils.six import text_type, string_types, StringIO
 from django.utils.text import capfirst
 from django.utils.timezone import now
 from django.http import HttpResponse
@@ -57,7 +57,7 @@ class TrackingReport(object):
             return value.strftime(self.date_format)
         elif isinstance(value, datetime.time):
             return value.strftime(self.time_format)
-        return text_type(value)
+        return str(value)
 
     def _cell_value(self, value):
         """
@@ -113,32 +113,32 @@ class TrackingReport(object):
 
         def header(list_report_item):
             if list_report_item in field_names:
-                return text_type(capfirst(meta.get_field(list_report_item).verbose_name))
+                return str(capfirst(meta.get_field(list_report_item).verbose_name))
             else:
-                if isinstance(list_report_item, string_types):
+                if isinstance(list_report_item, str):
                     # model member (method or property)
                     model_member = getattr(model, list_report_item, None)
                     # method check
                     if functions.is_method(model_member, functions.METHOD_UNBOUND|functions.METHOD_INSTANCE):
-                        return text_type(capfirst(getattr(model_member, 'short_description',
-                                                          list_report_item.replace('_', ' '))))
+                        return str(capfirst(getattr(model_member, 'short_description',
+                                                    list_report_item.replace('_', ' '))))
                     # property check
                     if isinstance(model_member, property):
                         if model_member.getter:
-                            return text_type(capfirst(getattr(model_member, 'short_description',
+                            return str(capfirst(getattr(model_member, 'short_description',
                                                               list_report_item.replace('_', ' '))))
                         raise ValueError('Property item in `list_report` member, or returned by `get_list_report()` '
                                          'must be readable')
                     # report member (method)
                     report_member = getattr(self, list_report_item, None)
                     if functions.is_method(report_member, functions.METHOD_UNBOUND|functions.METHOD_INSTANCE):
-                        return text_type(capfirst(getattr(report_member, 'short_description',
-                                                          list_report_item.replace('_', ' '))))
+                        return str(capfirst(getattr(report_member, 'short_description',
+                                                    list_report_item.replace('_', ' '))))
 
                 # regular callable
                 if callable(list_report_item):
-                    return text_type(capfirst(getattr(list_report_item, 'short_description', None) or
-                                              getattr(list_report_item, '__name__', None) or '<unknown>'))
+                    return str(capfirst(getattr(list_report_item, 'short_description', None) or
+                                        getattr(list_report_item, '__name__', None) or '<unknown>'))
 
                 # invalid value
                 raise TypeError('Item in `list_report` member, or returned by `get_list_report()` must be a model '
@@ -149,7 +149,7 @@ class TrackingReport(object):
             if list_report_item in field_names:
                 return lambda obj: _s(getattr(obj, list_report_item))
             else:
-                if isinstance(list_report_item, string_types):
+                if isinstance(list_report_item, str):
                     # model member (method or property)
                     model_member = getattr(model, list_report_item, None)
                     # method check

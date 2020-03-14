@@ -1,10 +1,9 @@
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
 setup(
     name='django-trackmodels-ritual',
-    version='0.1.1',
-    namespace_packages=['grimoire', 'grimoire.django'],
-    packages=find_packages(exclude=['trackmodels_proj', 'trackmodels_proj.*', 'sample', 'sample.*']),
+    version='1.0.0',
+    packages=find_namespace_packages(include=['grimoire.django.*']),
     package_data={
         'grimoire.django.tracked': [
             'locale/*/LC_MESSAGES/*.*',
@@ -17,5 +16,5 @@ setup(
     author='Luis y Anita',
     author_email='luismasuelli@hotmail.com',
     description='The trackmodels library is useful to set creation/update/delete dates on models and track by them',
-    install_requires=['Django>=1.7', 'python-dateutil>=2.6.1', 'python-cantrips>=0.7.5']
+    install_requires=['Django>=2.2', 'python-dateutil>=2.6.1', 'python-cantrips>=1.0.0']
 )
