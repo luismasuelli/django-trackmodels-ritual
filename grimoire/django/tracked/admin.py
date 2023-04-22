@@ -1,10 +1,10 @@
 from __future__ import unicode_literals
-from django.conf.urls import url
+from django.urls import re_path
 from django.contrib.admin import SimpleListFilter, ModelAdmin
 from django.core.exceptions import PermissionDenied
 from django.template.response import TemplateResponse
-from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import force_str
+from django.utils.translation import gettext_lazy as _
 import logging
 
 
@@ -146,9 +146,9 @@ class TrackedLiveAdmin(ModelAdmin):
 
         info = self.model._meta.app_label, self.model._meta.model_name
         return [
-            url(r'^report/(?P<key>\w+)/(?P<period>\w)$',
-                self.admin_site.admin_view(self.report_view),
-                name='%s_%s_tracking_report' % info)
+            re_path(r'^report/(?P<key>\w+)/(?P<period>\w)$',
+                    self.admin_site.admin_view(self.report_view),
+                    name='%s_%s_tracking_report' % info)
         ] + super(TrackedLiveAdmin, self).get_urls()
 
     def changelist_view(self, request, extra_context=None):
@@ -173,8 +173,8 @@ class TrackedLiveAdmin(ModelAdmin):
         request.current_app = self.admin_site.name
         context = dict(
             self.admin_site.each_context(request),
-            module_name=force_text(opts.verbose_name_plural),
-            title=(_('Tracking report error for %s') % force_text(opts.verbose_name)),
+            module_name=force_str(opts.verbose_name_plural),
+            title=(_('Tracking report error for %s') % force_str(opts.verbose_name)),
             opts=opts, app_label=app_label, error=error
         )
 
