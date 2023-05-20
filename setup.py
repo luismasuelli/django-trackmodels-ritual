@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='django-trackmodels-ritual',
-    version='1.0.1',
+    version='1.1.1',
     packages=[
         'grimoire.django.tracked',
         'grimoire.django.tracked.models'
